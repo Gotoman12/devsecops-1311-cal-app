@@ -82,8 +82,12 @@ public class Calculator {
         }
         String s = Double.toString(value);
         if (s.contains(".")) {
-            // remove trailing zeros
-            s = s.replaceAll("0+$", "").replaceAll("$", "");
+            // remove trailing zeros after the decimal point
+            s = s.replaceAll("0+$", "");
+            // if we ended up with a trailing decimal point (e.g. "3."), remove it
+            if (s.endsWith(".")) {
+                s = s.substring(0, s.length() - 1);
+            }
         }
         return s;
     }
