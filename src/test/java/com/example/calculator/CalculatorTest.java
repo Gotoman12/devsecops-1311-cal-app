@@ -325,10 +325,10 @@ class CalculatorTest {
     void testInvalidOperator() {
         String display = "5";
         display = calc.setOperator(display, "%"); // Invalid operator stored
-        display = calc.inputDigit(display, '3');
+        final String finalDisplay = calc.inputDigit(display, '3');
 
         assertThrows(IllegalArgumentException.class, () ->
-            calc.calculate(display) // Exception thrown when trying to calculate
+            calc.calculate(finalDisplay) // Exception thrown when trying to calculate
         );
     }
 
