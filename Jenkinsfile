@@ -18,6 +18,7 @@ pipeline {
                 sh 'mvn clean compile'
             }
         }
+
         stage('Test-Case'){
             steps{
                 sh 'mvn clean test'
@@ -32,7 +33,7 @@ pipeline {
 
         stage('Verify'){
             steps{
-                sh mvn clean verfiy
+                sh 'mvn clean verify'
             }
         }
 
@@ -43,16 +44,15 @@ pipeline {
 
             post{
                 always{
-                    jacoco{
-                       execPattern: '**/target/jacoco.exec',
-                       classPattern: '**/target/classes',
-                       sourcePattern: '**/src/main/java',
-                       inclusionPattern: '**/*.class'
-                    }
+                    jacoco(
+                        execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        inclusionPattern: '**/*.class'
+                    )
                 }
             }
         }          
 
     }
-
 }
