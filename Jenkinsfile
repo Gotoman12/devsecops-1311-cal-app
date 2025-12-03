@@ -52,7 +52,18 @@ pipeline {
                     )
                 }
             }
-        }          
+        }  
+
+        stage('Sonar-Qube-Analysis'){
+            steps{
+                sh '''
+                    mvn sonar:sonar \
+                        -Dsonar.projectKey=cal-app \
+                        -Dsonar.host.url=http://44.247.38.123:9000 \
+                        -Dsonar.login=9bc4cbb7d017932545e885e7449cbe99648a61cd
+                '''
+            }
+        }      
 
     }
 }
