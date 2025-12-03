@@ -70,7 +70,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.example.calculator.CalculatorApp</mainClass>
+                    <!-- Updated to match the actual main class in the JAR -->
+                    <mainClass>com.example.calculator.CalculatorApplication</mainClass>
                     <jvmArguments>
                         --add-opens java.base/java.io=ALL-UNNAMED
                         --add-opens java.base/java.lang=ALL-UNNAMED
