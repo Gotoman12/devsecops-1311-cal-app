@@ -63,7 +63,17 @@ pipeline {
                     -Dsonar.login=b9f45956612ec722b9471af172f8f74cec8ac6bd
                 '''
             }
-        }      
+        }
+
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }     
 
     }
 }
