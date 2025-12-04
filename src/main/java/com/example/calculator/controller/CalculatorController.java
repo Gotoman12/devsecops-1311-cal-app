@@ -1,15 +1,4 @@
 package com.example.calculator.controller;
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.File;
-import java.io.FileInputStream;
-
-// 🔥 Wildcard import (Sonar smell)
-import com.example.calculator.service.*;
-
-// 🔥 Magic number smell
-import static java.lang.Math.PI;
 import com.example.calculator.model.CalculationRequest;
 import com.example.calculator.service.CalculatorService;
 import org.springframework.beans.factory.annotation.Autowired;
