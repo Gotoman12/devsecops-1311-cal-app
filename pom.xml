@@ -132,14 +132,14 @@
                     </outputFormats>
                 </configuration>
             </plugin>
-
+            <!-- OWASP PULGIN Plugin -->
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>12.1.3</version>
                 <configuration>
                 <format>ALL</format>
-                <failBuildOnCVSS>11</failBuildOnCVSS>
+                <failBuildOnCVSS>8</failBuildOnCVSS>
                 <failOnError>false</failOnError>
                 </configuration>
                 <executions>
