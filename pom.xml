@@ -141,8 +141,11 @@
                     <format>ALL</format>
                     <failBuildOnCVSS>11</failBuildOnCVSS>
 
-                    <!-- Disable OSS Index to prevent Unauthorized/Rate-limit -->
-                    <ossIndexAnalyzerEnabled>false</ossIndexAnalyzerEnabled>
+                    <!-- Correct flag to disable OSS Index (fixes 401 + 429 errors) -->
+                    <ossIndexEnabled>false</ossIndexEnabled>
+
+                    <!-- Optional: speed up by disabling central checks -->
+                    <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
                 </configuration>
                 <executions>
                     <execution>
