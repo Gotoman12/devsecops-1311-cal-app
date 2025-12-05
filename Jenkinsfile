@@ -6,38 +6,38 @@ pipeline {
         maven 'maven'
     }
 
-    stages{
+    stages {
 
-        stage('Git checkout'){
-            steps{
+        stage('Git checkout') {
+            steps {
                 git url: 'https://github.com/ManojKRISHNAPPA/devsecops-1311-cal-app.git', branch: 'main'
             }
         }
 
-        stage('Compile'){
-            steps{
+        stage('Compile') {
+            steps {
                 sh 'mvn clean compile'
             }
         }
 
-        stage('Test-Case'){
-            steps{
+        stage('Test-Case') {
+            steps {
                 sh 'mvn clean test'
             }
         }
 
-        stage('Package'){
-            steps{
+        stage('Package') {
+            steps {
                 sh 'mvn clean package'
             }
         }
 
-        stage('Code Coverage'){
-            steps{
+        stage('Code Coverage') {
+            steps {
                 sh 'mvn jacoco:report'
             }
-            post{
-                always{
+            post {
+                always {
                     jacoco(
                         execPattern: '**/target/jacoco.exec',
                         classPattern: '**/target/classes',
@@ -62,47 +62,33 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
-        }   
+        }
 
-        // stage('OWASP FS Scan') {
-        //     steps {
-        //         dependencyCheck additionalArguments: '''
-        //             --scan ./ 
-        //             --disableYarnAudit 
-        //             --disableNodeAudit 
-        //             --nvdApiKey 0ad9f72c-7dcd-4a1d-af36-83d8cc7f3526 
-        //             --noupdate
-        //         ''', odcInstallation: 'DC'
-
-        //         archiveArtifacts(
-        //             allowEmptyArchive: true, 
-        //             artifacts: '**/dependency-check-report.xml'
-        //         )
-        //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-        //     }
-        // }
-        
-        stage('Vulnarabilties scan-OWASP'){
+        stage('Vulnerabilities Scan - OWASP & Trivy') {
             parallel {
-                stage('Dependency Check') {
+
+                stage('OWASP Dependency Check') {
                     steps {
                         sh 'mvn org.owasp:dependency-check-maven:check -Dformat=ALL'
                     }
                 }
 
-                stage('Trivy base image scan') {
+                stage('Trivy Base Image Scan') {
                     steps {
                         sh 'bash trivy-docker-image-scan.sh'
                     }
                 }
+
+            }
         }
 
-        stage('Docker-Image-creation'){
-            steps{
+        stage('Docker Image Creation') {
+            steps {
                 sh '''
                     docker build -t cal-app:1 .
                 '''
             }
         }
-    }
-}
+
+    } // end stages
+} // end pipeline
