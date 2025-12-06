@@ -1,31 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fullstack-deployment
+  name: dev-sec-ops-deployment
+  labels:
+    app: dev-sec-ops
 spec:
+  replicas: 3
   selector:
     matchLabels:
-      app: fullstack
-  replicas: 3
+      app: dev-sec-ops
   template:
     metadata:
       labels:
-        app: fullstack
+        app: dev-sec-ops
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
-
       containers:
-      - name: fullstack
+      - name: dev-sec-ops-container
         image: replace
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 8081
 
         securityContext:
           allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           capabilities:
             drop:
             - ALL
@@ -33,20 +34,20 @@ spec:
         resources:
           requests:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "250m"
           limits:
             memory: "512Mi"
-            cpu: "1"
+            cpu: "500m"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: fullstack-service
+  name: dev-sec-ops-service
 spec:
   selector:
-    app: fullstack
+    app: dev-sec-ops
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 8080
+    targetPort: 8081
   type: LoadBalancer
