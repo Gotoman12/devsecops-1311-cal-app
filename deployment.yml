@@ -12,25 +12,24 @@ spec:
       labels:
         app: fullstack
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+
       containers:
       - name: fullstack
         image: replace
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
-        # Adding health checks (customize the path and port as needed)
-        # livenessProbe:
-        #   httpGet:
-        #     path: /health
-        #     port: 8080
-        #   initialDelaySeconds: 30
-        #   periodSeconds: 10
-        # readinessProbe:
-        #   httpGet:
-        #     path: /health
-        #     port: 8080
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+
         resources:
           requests:
             memory: "256Mi"
@@ -42,12 +41,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fullstack-service # Updated name for clarity
+  name: fullstack-service
 spec:
   selector:
     app: fullstack
   ports:
-  - protocol: "TCP"
+  - protocol: TCP
     port: 80
     targetPort: 8080
   type: LoadBalancer
