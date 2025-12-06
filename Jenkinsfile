@@ -143,6 +143,12 @@ pipeline {
             }
         }
 
+        stage('OPA-kubernetes'){
+            steps{
+                sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego deployment.yml'
+            }
+        }
+
         stage('Deploying to EKS'){
             steps{
                 withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://AC0929E28609D9C6B318DA622D40A5FE.sk1.us-west-2.eks.amazonaws.com') {
