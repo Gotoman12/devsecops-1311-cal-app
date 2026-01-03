@@ -79,12 +79,33 @@ pipeline {
                 }
             }
         }
-        stage("SonerQube"){
+       /*  stage("SonerQube"){
             steps{
                 sh'''mvn sonar:sonar \
                     -Dsonar.projectKey=calculator \
                     -Dsonar.host.url=http://54.81.88.152:9000 \
                     -Dsonar.login=221ea1c81c4ce8d5fa83f6526bb55f48bad43ce6
+                '''
+            }
+        } */
+        stage('build && SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    // Optionally use a Maven environment you've configured already
+                    withMaven(maven:'Maven 3.9.4') {
+                        sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                    }
+                }
+            }
+        }
+        stage("QualityGate-check"){
+            steps{
+                sh'''
+                    timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+                }
                 '''
             }
         }
