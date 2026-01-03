@@ -95,15 +95,11 @@ pipeline {
                     }
                 }
             }
-        stage("QualityGate-check"){
-            steps{
-                sh'''
-                    timeout(time: 1, unit: 'HOURS') {
-                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-                    // true = set pipeline to UNSTABLE, false = don't
+        stage('SonarQube Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
-                '''
             }
         }
     } 
