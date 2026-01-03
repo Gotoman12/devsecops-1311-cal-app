@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot Calculator</title>
+    <link rel="stylesheet" th:href="@{/css/calculator.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="calculator-wrapper">
+            <div class="calculator-header">
+                <div class="header-content">
+                    <div class="calculator-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h1>Manoj Calculator</h1>
+                    <p>Manoj Calculator with Backend Integration</p>
+                </div>
+                <div class="theme-toggle">
+                    <button id="themeToggle" class="theme-btn">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calculator">
+                <div class="display-container">
+                    <div class="display">
+                        <div class="display-history" id="history"></div>
+                        <div class="display-current" id="display">0</div>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <!-- Row 1 - Functions -->
+                    <button class="btn btn-function" onclick="clearAll()">AC</button>
+                    <button class="btn btn-function" onclick="clearEntry()">CE</button>
+                    <button class="btn btn-function" onclick="deleteLast()">
+                        <i class="fas fa-backspace"></i>
+                    </button>
+                    <button class="btn btn-operator" onclick="setOperation('÷')">÷</button>
+                    
+                    <!-- Row 2 -->
+                    <button class="btn btn-number" onclick="appendNumber('7')">7</button>
+                    <button class="btn btn-number" onclick="appendNumber('8')">8</button>
+                    <button class="btn btn-number" onclick="appendNumber('9')">9</button>
+                    <button class="btn btn-operator" onclick="setOperation('×')">×</button>
+                    
+                    <!-- Row 3 -->
+                    <button class="btn btn-number" onclick="appendNumber('4')">4</button>
+                    <button class="btn btn-number" onclick="appendNumber('5')">5</button>
+                    <button class="btn btn-number" onclick="appendNumber('6')">6</button>
+                    <button class="btn btn-operator" onclick="setOperation('-')">-</button>
+                    
+                    <!-- Row 4 -->
+                    <button class="btn btn-number" onclick="appendNumber('1')">1</button>
+                    <button class="btn btn-number" onclick="appendNumber('2')">2</button>
+                    <button class="btn btn-number" onclick="appendNumber('3')">3</button>
+                    <button class="btn btn-operator" onclick="setOperation('+')">+</button>
+                    
+                    <!-- Row 5 -->
+                    <button class="btn btn-number btn-zero" onclick="appendNumber('0')">0</button>
+                    <button class="btn btn-function" onclick="appendDecimal()">.</button>
+                    <button class="btn btn-equals" onclick="calculate()">=</button>
+                </div>
+            </div>
+            
+            <div class="calculator-footer">
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Ready</span>
+                </div>
+                <div class="api-info">
+                    <i class="fas fa-server"></i>
+                    <span>Works on Spring Boot API</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Copyright line -->
+        <div class="copyright" style="text-align:center; margin-top: 15px; font-size: 0.9rem; color: #888;">
+            &copy; manojkrishnappa
+        </div>
+        
+        <!-- Loading spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Calculating...</p>
+        </div>
+        
+        <!-- Error modal -->
+        <div class="error-modal" id="errorModal">
+            <div class="error-content">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Calculation Error</h3>
+                <p id="errorMessage">An error occurred during calculation.</p>
+                <button class="error-close" onclick="closeErrorModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Particles animation -->
+    <div class="particles" id="particles"></div>
+    
+    <script th:src="@{/js/calculator.js}"></script>
+</body>
+</html>
