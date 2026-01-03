@@ -57,6 +57,8 @@ pipeline {
                     )
                     emailext(
                 subject: "JaCoCo Coverage Report - Build #${BUILD_NUMBER}",
+                mimeType: 'text/html',
+                to: 'mallikarjunckm@gmail.com',
                 body: """
                 <h2>Build Status: ${currentBuild.currentResult}</h2>
 
@@ -65,16 +67,14 @@ pipeline {
 
                 <p>
                 📊 <b>JaCoCo Coverage Report:</b><br>
-                <a href="${BUILD_URL}jacoco/">View Coverage in Jenkins</a>
+                <a href="${BUILD_URL}jacoco/">View Coverage</a>
                 </p>
 
                 <p>
                 🧪 <b>Test Results:</b><br>
                 <a href="${BUILD_URL}testReport/">View Test Report</a>
                 </p>
-                """,
-                mimeType: 'text/html',
-                to: 'mallikarjunckm@gmail.com'
+                """
             )
                 }
             }
