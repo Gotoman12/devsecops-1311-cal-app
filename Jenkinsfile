@@ -95,7 +95,6 @@ pipeline {
                     }
                 }
             }
-        }
         stage("QualityGate-check"){
             steps{
                 sh'''
