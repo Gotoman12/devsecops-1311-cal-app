@@ -3,8 +3,6 @@ package com.example.calculator.controller;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import com.example.calculator.controller.CalculatorController;
 import com.example.calculator.model.CalculationRequest;
 import com.example.calculator.service.CalculatorService;
 import org.junit.jupiter.api.BeforeEach;
