@@ -45,12 +45,37 @@ pipeline {
             }
             post {
                 always {
+                     // Publish test results
+                    junit testResults: '**/target/surefire-reports/*.xml',
+                  allowEmptyResults: true
+                   // Publish JaCoCo coverage in Jenkins
                     jacoco(
                         execPattern: '**/target/jacoco.exec',
                         classPattern: '**/target/classes',
                         sourcePattern: '**/src/main/java',
                         inclusionPattern: '**/*.class'
                     )
+                    emailext(
+                subject: "JaCoCo Coverage Report - Build #${BUILD_NUMBER}",
+                body: """
+                <h2>Build Status: ${currentBuild.currentResult}</h2>
+
+                <p><b>Job:</b> ${JOB_NAME}</p>
+                <p><b>Build:</b> #${BUILD_NUMBER}</p>
+
+                <p>
+                📊 <b>JaCoCo Coverage Report:</b><br>
+                <a href="${BUILD_URL}jacoco/">View Coverage in Jenkins</a>
+                </p>
+
+                <p>
+                🧪 <b>Test Results:</b><br>
+                <a href="${BUILD_URL}testReport/">View Test Report</a>
+                </p>
+                """,
+                mimeType: 'text/html',
+                to: 'mallikarjunckm@gmail.com'
+            )
                 }
             }
         }  
