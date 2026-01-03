@@ -38,7 +38,7 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
-
+       
         stage('Code Coverage') {
             steps {
                 sh 'mvn jacoco:report'
@@ -78,7 +78,16 @@ pipeline {
             )
                 }
             }
-        }  
+        }
+        stage("SonerQube"){
+            steps{
+                sh'''mvn sonar:sonar \
+                    -Dsonar.projectKey=calculator \
+                    -Dsonar.host.url=http://54.81.88.152:9000 \
+                    -Dsonar.login=221ea1c81c4ce8d5fa83f6526bb55f48bad43ce6
+                '''
+            }
+        }
     } 
 } 
 
