@@ -81,10 +81,11 @@ pipeline {
         }
        /*  stage("SonerQube"){
             steps{
-                sh'''mvn sonar:sonar \
-                    -Dsonar.projectKey=calculator \
-                    -Dsonar.host.url=http://54.81.88.152:9000 \
-                    -Dsonar.login=221ea1c81c4ce8d5fa83f6526bb55f48bad43ce6
+                sh'''
+                    mvn sonar:sonar \
+                    -Dsonar.projectKey=cal-app \
+                    -Dsonar.host.url=http://54.146.166.228:9000 \
+                    -Dsonar.login=79ffada4f425333efdd0d8f1e62d37d38936e588
                 '''
             }
         } */
