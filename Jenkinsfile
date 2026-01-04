@@ -107,11 +107,11 @@ pipeline {
             steps {
                  sh "mvn dependency-check:check"
               }
-            post {
+           /*  post {
               always {
                 dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
                 }
-           }
+           } */
         }
     } 
 } 
