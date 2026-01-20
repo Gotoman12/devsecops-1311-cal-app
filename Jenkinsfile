@@ -8,6 +8,7 @@ pipeline{
     environment{
         AWS_ACCESS_KEY = credentials('AWS_ACCESS_KEY')
         AWS_SECRET_KEY = credentials('AWS_SECRET_KEY')
+        SNYK_TOKEN = credentials('SNYK_TOKEN')
     }
 
     stages{
@@ -16,6 +17,11 @@ pipeline{
                 git url: 'https://github.com/Gotoman12/devsecops-1311-cal-app.git',branch: 'IAC-Scan'
             }
                
+        }
+        stage('Snyk Security Scan'){
+            steps{
+                sh 'pwd; cd eks/;./iac-code-scan.sh'
+            }
         }
         stage("terraform-plan"){
             steps{
