@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "manojkrishnappa/dev-sec-ops:${GIT_COMMIT}"
+        IMAGE_NAME = "arjunckm/dev-sec-ops:${GIT_COMMIT}"
         AWS_REGION = "us-west-2"
         CLUSTER_NAME = "itkannadigaru-cluster"
         NAMESPACE = "microdegree"
@@ -55,27 +55,27 @@ pipeline {
                         sourcePattern: '**/src/main/java',
                         inclusionPattern: '**/*.class'
                     )
-                    emailext(
-                subject: "JaCoCo Coverage Report - Build #${BUILD_NUMBER}",
-                mimeType: 'text/html',
-                to: 'mallikarjunckm@gmail.com',
-                body: """
-                <h2>Build Status: ${currentBuild.currentResult}</h2>
+            //         emailext(
+            //     subject: "JaCoCo Coverage Report - Build #${BUILD_NUMBER}",
+            //     mimeType: 'text/html',
+            //     to: 'mallikarjunckm@gmail.com',
+            //     body: """
+            //     <h2>Build Status: ${currentBuild.currentResult}</h2>
 
-                <p><b>Job:</b> ${JOB_NAME}</p>
-                <p><b>Build:</b> #${BUILD_NUMBER}</p>
+            //     <p><b>Job:</b> ${JOB_NAME}</p>
+            //     <p><b>Build:</b> #${BUILD_NUMBER}</p>
 
-                <p>
-                📊 <b>JaCoCo Coverage Report:</b><br>
-                <a href="${BUILD_URL}jacoco/">View Coverage</a>
-                </p>
+            //     <p>
+            //     📊 <b>JaCoCo Coverage Report:</b><br>
+            //     <a href="${BUILD_URL}jacoco/">View Coverage</a>
+            //     </p>
 
-                <p>
-                🧪 <b>Test Results:</b><br>
-                <a href="${BUILD_URL}testReport/">View Test Report</a>
-                </p>
-                """
-            )
+            //     <p>
+            //     🧪 <b>Test Results:</b><br>
+            //     <a href="${BUILD_URL}testReport/">View Test Report</a>
+            //     </p>
+            //     """
+            // )
                 }
             }
         }
@@ -103,15 +103,32 @@ pipeline {
                 }
             }
         }
-        stage('Vulnerability Scan - Docker ') {
-            steps {
-                 sh "mvn dependency-check:check"
-              }
-            post {
-              always {
-                dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        // stage('Vulnerability Scan - Docker ') {
+        //     steps {
+        //          sh "mvn dependency-check:check"
+        //       }
+        //     post {
+        //       always {
+        //         dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        //         }
+        //    }
+        // }
+        stage("Docker scan"){
+            parallel{
+                stage("Base images scan"){
+                    steps{
+                        sh '''
+                        chmod +x trivy-docker-image-scan.sh
+                        bash dockerfile-security.rego
+                        '''
+                    }
+                stage('OPA confest'){
+                    steps{
+                      sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest:latest test --policy dockerfile-security.rego Dockerfile'  
+                    }
+                 }
                 }
-           }
+            }
         }
     } 
 } 
