@@ -141,7 +141,7 @@ pipeline{
         }
         stage('Deploying to EKS'){
             steps{
-                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://6ACA207C21E88AB2270E17837C9771E2.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: '${NAMESPACE}', restrictKubeConfigAccess: false, serverUrl: 'https://6ACA207C21E88AB2270E17837C9771E2.gr7.us-east-1.eks.amazonaws.com') {
                     sh " sed -i 's|replace|${IMAGE_NAME}|g' deployment.yml "
                     sh " kubectl apply -f deployment.yml -n ${NAMESPACE}"
                 }
