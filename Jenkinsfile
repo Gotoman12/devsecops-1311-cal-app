@@ -65,8 +65,8 @@ pipeline{
             steps{
                 script{
                     withSonarQubeEnv(credentialsId:'SonarQube'){
-                       // sh 'mvn sonar:sonar'
-                       sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                      sh ' mvn sonar:sonar -X'
+                       //sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
                     }
                 }
             }
