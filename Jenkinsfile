@@ -7,6 +7,9 @@ pipeline{
 
     environment{
         IMAGE_NAME= "arjunckm/cloth-app:${BUILD_NUMBER}"
+        AWS_REGION = "us-east-1"
+        CLUSTER_NAME = "itkannadigaru-cluster"
+        NAMESPACE = "microdegree"
     }
     stages{
         stage("Git-Checkout"){
@@ -102,5 +105,39 @@ pipeline{
           sh 'docker build -t ${IMAGE_NAME} .'
          }
       }
+    stage("docker-login"){
+            steps{
+                script{
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CRED', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                       sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                  }
+                }
+            }
+        }
+        stage("Dokcer Push"){
+            steps{
+                sh 'docker push ${IMAGE_NAME}'
+            }
+        }
+          stage('Updating the K8 clsuter'){
+            steps{
+                sh '''
+                    aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
+                '''
+            }
+        }
+        stage('OPA-kubernetes'){
+            steps{
+                sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego deployment.yml'
+            }
+        }
+        stage('Deploying to EKS'){
+            steps{
+                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://A546C567270F1D1BC4A0A38C786719EA.gr7.us-east-1.eks.amazonaws.com') {
+                    sh " sed -i 's|replace|${IMAGE_NAME}|g' deployment.yml "
+                    sh " kubectl apply -f deployment.yml -n ${NAMESPACE}"
+                }
+            }
+        }
     }
 }
