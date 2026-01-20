@@ -65,7 +65,9 @@ pipeline{
             steps{
                 script{
                     withSonarQubeEnv(credentialsId:'SonarQube'){
-                      sh ' mvn sonar:sonar -X'
+                      sh ''' mvn sonar:sonar \
+                         -Dsonar.projectKey=calculator-app
+                         '''
                        //sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
                     }
                 }
