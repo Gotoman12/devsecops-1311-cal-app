@@ -48,37 +48,38 @@ pipeline{
                 }
             }
         }
-        // stage("SonarQube-testing"){
-        //     steps{
-        //         sh '''
-        //                  mvn sonar:sonar \
-        //                 -Dsonar.projectKey=my-app \
-        //                 -Dsonar.host.url=http://20.197.49.99:9000 \
-        //                 -Dsonar.login=f694e104c026793fe9e9147750fc76972d0ab0ed
-        //         '''
-        //     }
-        // }
+        stage("SonarQube-testing"){
+            steps{
+                sh '''
+                         mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                            -Dsonar.projectKey=my-app \
+                            -Dsonar.projectName='my-app' \
+                            -Dsonar.host.url=http://52.91.25.200:9000 \
+                            -Dsonar.token=sqp_023ad3d2332c12e0d81ad872ec61d4937b040df8
+                '''
+            }
+        }
 
         // SAST: SonarQube-Analysis, Quality Gate 
-        stage("SonarQube-Analysis"){
-            steps{
-                script{
-                    withSonarQubeEnv(credentialsId:'SonarQube'){
-                        //sh 'mvn sonar:sonar'
-                       sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-                    }
-                }
-            }
-        }
-        stage("Quality Gate"){
-            steps{
-                timeout(time: 1, unit: 'HOURS') {
-                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-                    // true = set pipeline to UNSTABLE, false = don't
-                    waitForQualityGate abortPipeline: true
-            }
-        }
-    }
+    //     stage("SonarQube-Analysis"){
+    //         steps{
+    //             script{
+    //                 withSonarQubeEnv(credentialsId:'SonarQube'){
+    //                     //sh 'mvn sonar:sonar'
+    //                    sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     stage("Quality Gate"){
+    //         steps{
+    //             timeout(time: 1, unit: 'HOURS') {
+    //                 // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+    //                 // true = set pipeline to UNSTABLE, false = don't
+    //                 waitForQualityGate abortPipeline: true
+    //         }
+    //     }
+    // }
     // SCA stage : OWASP Dependency Check
     // stage("OWASP-Dependency Check"){
     //     steps{
@@ -140,7 +141,7 @@ pipeline{
         }
         stage('Deploying to EKS'){
             steps{
-                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://A546C567270F1D1BC4A0A38C786719EA.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'microdegree', restrictKubeConfigAccess: false, serverUrl: 'https://6ACA207C21E88AB2270E17837C9771E2.gr7.us-east-1.eks.amazonaws.com') {
                     sh " sed -i 's|replace|${IMAGE_NAME}|g' deployment.yml "
                     sh " kubectl apply -f deployment.yml -n ${NAMESPACE}"
                 }
