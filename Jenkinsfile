@@ -125,26 +125,26 @@ pipeline{
                 sh 'docker push ${IMAGE_NAME}'
             }
         }
-    //       stage('Updating the K8 clsuter'){
-    //         steps{
-    //             sh '''
-    //                 aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
-    //             '''
-    //         }
-    //     }
-    //     // K8s Policy Validation : OPA-kubernetes
-    //     stage('OPA-kubernetes'){
-    //         steps{
-    //             sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego deployment.yml'
-    //         }
-    //     }
-    //     stage('Deploying to EKS'){
-    //         steps{
-    //             withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: '${NAMESPACE}', restrictKubeConfigAccess: false, serverUrl: 'https://6ACA207C21E88AB2270E17837C9771E2.gr7.us-east-1.eks.amazonaws.com') {
-    //                 sh " sed -i 's|replace|${IMAGE_NAME}|g' deployment.yml "
-    //                 sh " kubectl apply -f deployment.yml -n ${NAMESPACE}"
-    //             }
-    //         }
-    //     }
+          stage('Updating the K8 clsuter'){
+            steps{
+                sh '''
+                    aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
+                '''
+            }
+        }
+        // K8s Policy Validation : OPA-kubernetes
+        stage('OPA-kubernetes'){
+            steps{
+                sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego deployment.yml'
+            }
+        }
+        stage('Deploying to EKS'){
+            steps{
+                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: '${NAMESPACE}', restrictKubeConfigAccess: false, serverUrl: 'https://6ACA207C21E88AB2270E17837C9771E2.gr7.us-east-1.eks.amazonaws.com') {
+                    sh " sed -i 's|replace|${IMAGE_NAME}|g' deployment.yml "
+                    sh " kubectl apply -f deployment.yml -n ${NAMESPACE}"
+                }
+            }
+        }
     }
 }
