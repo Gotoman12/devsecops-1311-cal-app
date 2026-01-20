@@ -21,7 +21,7 @@ pipeline{
         stage('Snyk Security Scan'){
             steps{
                 sh '''
-                eks/; chmod 777 iac-scan-synk.sh
+                cd eks/; chmod 777 iac-scan-synk.sh
                 cd eks/;./iac-scan-synk.sh
                 '''
             }
