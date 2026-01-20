@@ -1,136 +1,127 @@
-pipeline {
-    agent any 
-
-    tools {
-        jdk 'java-17'
-        maven 'Maven'
+pipeline{
+    agent any
+    tools{
+        jdk "java-17"
+        maven "maven"
     }
 
-    environment {
-        IMAGE_NAME = "arjunckm/dev-sec-ops:${GIT_COMMIT}"
-        AWS_REGION = "us-west-2"
-        CLUSTER_NAME = "itkannadigaru-cluster"
-        NAMESPACE = "microdegree"
+    environment{
+        IMAGE_NAME= "arjunckm/cloth-app:${BUILD_NUMBER}"
     }
-
-    stages {
-
-        stage('Git checkout') {
-            steps {
-                git url: 'https://github.com/Gotoman12/devsecops-1311-cal-app.git', branch: 'main'
+    stages{
+        stage("Git-Checkout"){
+            steps{
+                git url:"https://github.com/Gotoman12/Calulator-springboot.git", branch:"main"
             }
         }
-
-        stage('Compile') {
-            steps {
+        stage("Build"){
+            steps{
                 sh 'mvn clean compile'
             }
         }
-
-        stage('Test-Case') {
-            steps {
-                sh 'mvn clean test'
+        stage("Test"){
+            steps{
+                sh 'mvn test'
             }
         }
-
-        stage('Package') {
-            steps {
+        stage("Package"){
+            steps{
                 sh 'mvn clean package'
             }
         }
-       
-        stage('Code Coverage') {
-            steps {
+        stage("Unit Testing"){
+            steps{
                 sh 'mvn jacoco:report'
             }
             post {
                 always {
-                     // Publish test results
-                    junit testResults: '**/target/surefire-reports/*.xml',
-                  allowEmptyResults: true
-                   // Publish JaCoCo coverage in Jenkins
                     jacoco(
                         execPattern: '**/target/jacoco.exec',
                         classPattern: '**/target/classes',
                         sourcePattern: '**/src/main/java',
                         inclusionPattern: '**/*.class'
                     )
-            //         emailext(
-            //     subject: "JaCoCo Coverage Report - Build #${BUILD_NUMBER}",
-            //     mimeType: 'text/html',
-            //     to: 'mallikarjunckm@gmail.com',
-            //     body: """
-            //     <h2>Build Status: ${currentBuild.currentResult}</h2>
-
-            //     <p><b>Job:</b> ${JOB_NAME}</p>
-            //     <p><b>Build:</b> #${BUILD_NUMBER}</p>
-
-            //     <p>
-            //     📊 <b>JaCoCo Coverage Report:</b><br>
-            //     <a href="${BUILD_URL}jacoco/">View Coverage</a>
-            //     </p>
-
-            //     <p>
-            //     🧪 <b>Test Results:</b><br>
-            //     <a href="${BUILD_URL}testReport/">View Test Report</a>
-            //     </p>
-            //     """
-            // )
                 }
             }
         }
-       /*  stage("SonerQube"){
+        // stage("SonarQube-testing"){
+        //     steps{
+        //         sh '''
+        //                  mvn sonar:sonar \
+        //                 -Dsonar.projectKey=cloth-app \
+        //                 -Dsonar.host.url=http://44.204.70.230:9000 \
+        //                 -Dsonar.login=3e42eeddba9a67fc2bc8d70eda7ef722410e5297
+        //         '''
+        //     }
+        // }
+        // stage("Sonar-Qube"){
+        //             parallel{
+        //                 stage("SonarQube-Analysis"){
+        //                 steps{
+        //                     script{
+        //                     withSonarQubeEnv(credentialsId: 'sonarqube'){
+        //                         sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //        stage("Quality Gate"){
+        //             steps{
+        //                 timeout(time: 1, unit: 'HOURS') {
+        //                     // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+        //                     // true = set pipeline to UNSTABLE, false = don't
+        //                     waitForQualityGate abortPipeline: true
+        //                 }
+        //             }
+        //         } 
+        //     }
+        // }
+        stage("SonarQube-Analysis"){
             steps{
-                sh'''
-                    mvn sonar:sonar \
-                    -Dsonar.projectKey=cal-app \
-                    -Dsonar.host.url=http://54.146.166.228:9000 \
-                    -Dsonar.login=79ffada4f425333efdd0d8f1e62d37d38936e588
-                '''
-            }
-        } */
-        stage('build && SonarQube analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
+                script{
+                    withSonarQubeEnv(credentialsId: 'sonarqube'){
                         sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
                     }
                 }
             }
-        stage('SonarQube Quality Gate') {
-            steps {
-                timeout(time: 2, unit: 'MINUTES') {
+        }
+        stage("Quality Gate"){
+            steps{
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
                     waitForQualityGate abortPipeline: true
-                }
             }
         }
-        // stage('Vulnerability Scan - Docker ') {
-        //     steps {
-        //          sh "mvn dependency-check:check"
-        //       }
-        //     post {
-        //       always {
-        //         dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-        //         }
-        //    }
-        // }
-        stage("Docker scan"){
-            parallel{
-                stage("Base images scan"){
-                    steps{
-                        sh '''
-                        chmod +x trivy-docker-image-scan.sh
-                        bash dockerfile-security.rego
-                        '''
-                    }
-                stage('OPA confest'){
-                    steps{
+    }
+    // stage("OWASP-Dependency Check"){
+    //     steps{
+    //         sh 'mvn org.owasp:dependency-check-maven:check -Dformat=ALL'
+    //     }
+    // }
+
+    // Scanning the the base image used in the docker file
+    stage("Docker Image Scan"){
+        parallel{
+          stage("Trivy Scan for Docker base image"){
+            steps{
+                sh '''
+                    chmod +x trivy-docker-image-scan.sh
+                    bash trivy-docker-image-scan.sh
+                '''
+                }
+            }
+            stage('OPA confest'){
+               steps{
                       sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest:latest test --policy dockerfile-security.rego Dockerfile'  
                     }
-                 }
                 }
-            }
         }
-    } 
-} 
-
-
+    }
+    stage("Docker Build"){
+        steps{
+          sh 'docker build -t ${IMAGE_NAME} .'
+         }
+      }
+    }
+}
