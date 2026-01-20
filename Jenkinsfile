@@ -79,7 +79,7 @@ pipeline{
         stage("SonarQube-Analysis"){
             steps{
                 script{
-                    withSonarQubeEnv(credentialsId: 'sonarqube'){
+                    withSonarQubeEnv(credentialsId: 'SonarQube'){
                         sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
                     }
                 }
