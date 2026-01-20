@@ -20,7 +20,7 @@ pipeline{
         }
         stage('Snyk Security Scan'){
             steps{
-                sh 'pwd; cd eks/;./iac-code-scan.sh'
+                sh 'pwd; cd eks/;./iac-scan-synk.sh'
             }
         }
         stage("terraform-plan"){
