@@ -48,29 +48,29 @@ pipeline{
                 }
             }
         }
-        stage("SonarQube-testing"){
-            steps{
-                sh '''
-                    mvn sonar:sonar \
-                    -Dsonar.projectKey=cal-app \
-                    -Dsonar.projectName='cal-app' \
-                    -Dsonar.host.url=http://52.91.25.200:9000 \
-                    -Dsonar.token=sqp_0353ff0bdbb5c3a5c04359fa59ad7b4d832f04df
-                '''
-            }
-        }
+        // stage("SonarQube-testing"){
+        //     steps{
+        //         sh '''
+        //             mvn sonar:sonar \
+        //             -Dsonar.projectKey=cal-app \
+        //             -Dsonar.projectName='cal-app' \
+        //             -Dsonar.host.url=http://52.91.25.200:9000 \
+        //             -Dsonar.token=sqp_0353ff0bdbb5c3a5c04359fa59ad7b4d832f04df
+        //         '''
+        //     }
+        // }
 
         // SAST: SonarQube-Analysis, Quality Gate 
-    //     stage("SonarQube-Analysis"){
-    //         steps{
-    //             script{
-    //                 withSonarQubeEnv(credentialsId:'SonarQube'){
-    //                     //sh 'mvn sonar:sonar'
-    //                    sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-    //                 }
-    //             }
-    //         }
-    //     }
+        stage("SonarQube-Analysis"){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId:'SonarQube'){
+                        //sh 'mvn sonar:sonar'
+                       sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                    }
+                }
+            }
+        }
     //     stage("Quality Gate"){
     //         steps{
     //             timeout(time: 1, unit: 'HOURS') {
