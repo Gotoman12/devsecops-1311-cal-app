@@ -9,7 +9,7 @@ pipeline{
         IMAGE_NAME= "arjunckm/cloth-app:${BUILD_NUMBER}"
         AWS_REGION = "us-east-1"
         CLUSTER_NAME = "itkannadigaru-cluster"
-        NAMESPACE = "microdegree"
+        NAMESPACE = "itkannadigaru"
     }
     stages{
         stage("Git-Checkout"){
@@ -32,6 +32,7 @@ pipeline{
                 sh 'mvn clean package'
             }
         }
+        //  Unit testing 
         stage("Unit Testing"){
             steps{
                 sh 'mvn jacoco:report'
@@ -57,6 +58,8 @@ pipeline{
         //         '''
         //     }
         // }
+
+        // SAST: SonarQube-Analysis, Quality Gate 
         stage("SonarQube-Analysis"){
             steps{
                 script{
@@ -76,12 +79,14 @@ pipeline{
             }
         }
     }
+    // SCA stage : OWASP Dependency Check
     // stage("OWASP-Dependency Check"){
     //     steps{
     //         sh 'mvn org.owasp:dependency-check-maven:check -Dformat=ALL'
     //     }
     // }
-
+    
+    // Trivy Scan : Docker Image Scan
     //Scanning the the base image used in the docker file
     stage("Docker Image Scan"){
         parallel{
@@ -93,6 +98,7 @@ pipeline{
                 '''
                 }
             }
+            // Container Policy : OPA Conftest
             stage('OPA confest'){
                steps{
                       sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest:latest test --policy dockerfile-security.rego Dockerfile'  
@@ -126,6 +132,7 @@ pipeline{
                 '''
             }
         }
+        // K8s Policy Validation : OPA-kubernetes
         stage('OPA-kubernetes'){
             steps{
                 sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego deployment.yml'
