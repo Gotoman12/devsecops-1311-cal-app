@@ -44,25 +44,26 @@ pipeline{
                 }
             }
         }
-        stage("SonarQube-testing"){
+        // stage("SonarQube-testing"){
+        //     steps{
+        //         sh '''
+        //                  mvn sonar:sonar \
+        //                 -Dsonar.projectKey=my-app \
+        //                 -Dsonar.host.url=http://20.197.49.99:9000 \
+        //                 -Dsonar.login=f694e104c026793fe9e9147750fc76972d0ab0ed
+        //         '''
+        //     }
+        // }
+        stage("SonarQube-Analysis"){
             steps{
-                sh '''
-                         mvn sonar:sonar \
-                        -Dsonar.projectKey=my-app \
-                        -Dsonar.host.url=http://20.197.49.99:9000 \
-                        -Dsonar.login=f694e104c026793fe9e9147750fc76972d0ab0ed
-                '''
+                script{
+                    withSonarQubeEnv(credentialsId:'SonarQube'){
+                        sh 'mvn sonar:sonar'
+                       // sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                    }
+                }
             }
         }
-    //     stage("SonarQube-Analysis"){
-    //         steps{
-    //             script{
-    //                 withSonarQubeEnv(credentialsId:'SonarQube'){
-    //                     sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-    //                 }
-    //             }
-    //         }
-    //     }
     //     stage("Quality Gate"){
     //         steps{
     //             timeout(time: 1, unit: 'HOURS') {
