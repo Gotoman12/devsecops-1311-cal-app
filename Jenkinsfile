@@ -88,43 +88,43 @@ pipeline{
     
     // Trivy Scan : Docker Image Scan
     //Scanning the the base image used in the docker file
-    // stage("Docker Image Scan"){
-    //     parallel{
-    //       stage("Trivy Scan for Docker base image"){
-    //         steps{
-    //             sh '''
-    //                 chmod +x trivy-docker-image-scan.sh
-    //                 bash trivy-docker-image-scan.sh
-    //             '''
-    //             }
-    //         }
-    //         // Container Policy : OPA Conftest
-    //         stage('OPA confest'){
-    //            steps{
-    //                   sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest:latest test --policy dockerfile-security.rego Dockerfile'  
-    //                 }
-    //             }
-    //     }
-    // }
-    // stage("Docker Build"){
-    //     steps{
-    //       sh 'docker build -t ${IMAGE_NAME} .'
-    //      }
-    //   }
-    // stage("docker-login"){
-    //         steps{
-    //             script{
-    //                 withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CRED', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-    //                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-    //               }
-    //             }
-    //         }
-    //     }
-    //     stage("Dokcer Push"){
-    //         steps{
-    //             sh 'docker push ${IMAGE_NAME}'
-    //         }
-    //     }
+    stage("Docker Image Scan"){
+        parallel{
+          stage("Trivy Scan for Docker base image"){
+            steps{
+                sh '''
+                    chmod +x trivy-docker-image-scan.sh
+                    bash trivy-docker-image-scan.sh
+                '''
+                }
+            }
+            // Container Policy : OPA Conftest
+            stage('OPA confest'){
+               steps{
+                      sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest:latest test --policy dockerfile-security.rego Dockerfile'  
+                    }
+                }
+        }
+    }
+    stage("Docker Build"){
+        steps{
+          sh 'docker build -t ${IMAGE_NAME} .'
+         }
+      }
+    stage("docker-login"){
+            steps{
+                script{
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CRED', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                       sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                  }
+                }
+            }
+        }
+        stage("Dokcer Push"){
+            steps{
+                sh 'docker push ${IMAGE_NAME}'
+            }
+        }
     //       stage('Updating the K8 clsuter'){
     //         steps{
     //             sh '''
