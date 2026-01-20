@@ -22,7 +22,7 @@ pipeline{
             steps{
                 sh '''
                 chmod 777 iac-scan-synk.sh
-                pwd; cd eks/;./iac-scan-synk.sh
+                cd eks/;./iac-scan-synk.sh
                 '''
             }
         }
