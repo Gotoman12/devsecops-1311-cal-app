@@ -44,56 +44,34 @@ pipeline{
                 }
             }
         }
-        stage("SonarQube-testing"){
-            steps{
-                sh '''
-                         mvn sonar:sonar \
-                        -Dsonar.projectKey=cal-app \
-                        -Dsonar.host.url=http://20.197.49.99:9000 \
-                        -Dsonar.login=0d45f5d5bfc41d5ded81a699d68bd3da97226ce5
-                '''
-            }
-        }
-        // stage("Sonar-Qube"){
-        //             parallel{
-        //                 stage("SonarQube-Analysis"){
-        //                 steps{
-        //                     script{
-        //                     withSonarQubeEnv(credentialsId: 'sonarqube'){
-        //                         sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //        stage("Quality Gate"){
-        //             steps{
-        //                 timeout(time: 1, unit: 'HOURS') {
-        //                     // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-        //                     // true = set pipeline to UNSTABLE, false = don't
-        //                     waitForQualityGate abortPipeline: true
-        //                 }
-        //             }
-        //         } 
+        // stage("SonarQube-testing"){
+        //     steps{
+        //         sh '''
+        //                  mvn sonar:sonar \
+        //                 -Dsonar.projectKey=cal-app \
+        //                 -Dsonar.host.url=http://20.197.49.99:9000 \
+        //                 -Dsonar.login=0d45f5d5bfc41d5ded81a699d68bd3da97226ce5
+        //         '''
         //     }
         // }
-    //     stage("SonarQube-Analysis"){
-    //         steps{
-    //             script{
-    //                 withSonarQubeEnv(credentialsId: 'SonarQube'){
-    //                     sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     stage("Quality Gate"){
-    //         steps{
-    //             timeout(time: 1, unit: 'HOURS') {
-    //                 // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-    //                 // true = set pipeline to UNSTABLE, false = don't
-    //                 waitForQualityGate abortPipeline: true
-    //         }
-    //     }
-    // }
+        stage("SonarQube-Analysis"){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId: 'SonarQube'){
+                        sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                    }
+                }
+            }
+        }
+        stage("Quality Gate"){
+            steps{
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+            }
+        }
+    }
     // stage("OWASP-Dependency Check"){
     //     steps{
     //         sh 'mvn org.owasp:dependency-check-maven:check -Dformat=ALL'
