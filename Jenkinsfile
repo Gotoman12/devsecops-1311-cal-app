@@ -60,7 +60,7 @@ pipeline{
         //     }
         // }
 
-        SAST: SonarQube-Analysis, Quality Gate 
+      //  SAST: SonarQube-Analysis, Quality Gate 
         stage("SonarQube-Analysis"){
             steps{
                 script{
