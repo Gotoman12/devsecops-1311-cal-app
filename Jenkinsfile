@@ -13,7 +13,7 @@ pipeline{
     stages{
         stage("checkout"){
             steps{
-                git url: 'https://github.com/Gotoman12/DevOps-terraform.git',branch: 'Iac-Dev'
+                git url: 'https://github.com/Gotoman12/devsecops-1311-cal-app.git',branch: 'IAC-Scan'
             }
                
         }
