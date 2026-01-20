@@ -11,7 +11,7 @@ pipeline{
     stages{
         stage("Git-Checkout"){
             steps{
-                git url:"https://github.com/Gotoman12/Calulator-springboot.git", branch:"main"
+                git url:"https://github.com/Gotoman12/devsecops-1311-cal-app.git", branch:"main"
             }
         }
         stage("Build"){
