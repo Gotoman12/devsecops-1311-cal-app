@@ -48,36 +48,36 @@ pipeline{
                 }
             }
         }
-        stage("SonarQube-testing"){
-            steps{
-                sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.projectKey=cal-app-test \
-                        -Dsonar.host.url=http://44.211.30.29:9000 \
-                        -Dsonar.login=d7d1ac88a9e82dbaa1e5e881d1b8b610fb7d2a36
-                '''
-            }
-        }
+        // stage("SonarQube-testing"){
+        //     steps{
+        //         sh '''
+        //                 mvn sonar:sonar \
+        //                 -Dsonar.projectKey=cal-app-test \
+        //                 -Dsonar.host.url=http://44.211.30.29:9000 \
+        //                 -Dsonar.login=d7d1ac88a9e82dbaa1e5e881d1b8b610fb7d2a36
+        //         '''
+        //     }
+        // }
 
       //  SAST: SonarQube-Analysis, Quality Gate 
-    //     stage("SonarQube-Analysis"){
-    //         steps{
-    //             script{
-    //                 withSonarQubeEnv(credentialsId:'SonarQube'){
-    //                    sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     stage("Quality Gate"){
-    //         steps{
-    //             timeout(time: 1, unit: 'HOURS') {
-    //                 // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-    //                 // true = set pipeline to UNSTABLE, false = don't
-    //                 waitForQualityGate abortPipeline: true
-    //         }
-    //     }
-    // }
+        stage("SonarQube-Analysis"){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId:'SonarQube'){
+                       sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                    }
+                }
+            }
+        }
+        stage("Quality Gate"){
+            steps{
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+            }
+        }
+    }
     // SCA stage : OWASP Dependency Check
     // stage("OWASP-Dependency Check"){
     //     steps{
