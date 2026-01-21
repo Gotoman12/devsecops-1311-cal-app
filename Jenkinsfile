@@ -85,26 +85,26 @@ pipeline{
     //     }
     // }
     
-    // Trivy Scan : Docker Image Scan
-    //Scanning the the base image used in the docker file
-    // stage("Docker Image Scan"){
-    //     parallel{
-    //       stage("Trivy Scan for Docker base image"){
-    //         steps{
-    //             sh '''
-    //                 chmod +x trivy-docker-image-scan.sh
-    //                 bash trivy-docker-image-scan.sh
-    //             '''
-    //             }
-    //         }
-    //         // Container Policy : OPA Conftest
-    //         stage('OPA confest'){
-    //            steps{
-    //                   sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest:latest test --policy dockerfile-security.rego Dockerfile'  
-    //                 }
-    //             }
-    //     }
-    // }
+    //Trivy Scan : Docker Image Scan
+   // Scanning the the base image used in the docker file
+    stage("Docker Image Scan"){
+        parallel{
+          stage("Trivy Scan for Docker base image"){
+            steps{
+                sh '''
+                    chmod +x trivy-docker-image-scan.sh
+                    bash trivy-docker-image-scan.sh
+                '''
+                }
+            }
+            // Container Policy : OPA Conftest
+            stage('OPA confest'){
+               steps{
+                      sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest:latest test --policy dockerfile-security.rego Dockerfile'  
+                    }
+                }
+        }
+    }
     // stage("Docker Build"){
     //     steps{
     //       sh 'docker build -t ${IMAGE_NAME} .'
